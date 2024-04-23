@@ -1,37 +1,39 @@
 package com.example.demo.services;
 
-import com.example.demo.errors.UserAlreadyExistError;
-import com.example.demo.errors.UserNotFoundError;
+import com.example.demo.exceptions.UserAlreadyExistException;
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.models.UserEntity;
 import com.example.demo.repository.UserRepo;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
+    @NonNull
     private UserRepo userRepo;
 
-
-    public UserEntity registration(@RequestBody UserEntity user) {
-        if (userRepo.findByName(user.getName()) != null) {
-            throw new UserAlreadyExistError("User already exist");
+    public UserEntity registration(final UserEntity user) throws UserAlreadyExistException {
+        val foundUser = userRepo.findByName(user.getName());
+        System.out.print(foundUser);
+        if (foundUser != null) {
+            throw new UserAlreadyExistException("User already exist");
         }
         return userRepo.save(user);
     }
 
-    public UserEntity getInfo(Integer id) {
+    public UserEntity getInfo(Integer id) throws UserNotFoundException {
         UserEntity user = userRepo.findById(id).get();
-        if (user == null){
-           throw new UserNotFoundError("User not found");
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
         }
         return user;
     }
 
-    public Integer delete(Integer id){
+    public Integer delete(Integer id) {
         userRepo.deleteById(id);
         return id;
     }

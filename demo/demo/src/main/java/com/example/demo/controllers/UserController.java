@@ -1,33 +1,31 @@
 package com.example.demo.controllers;
 
-import com.example.demo.errors.UserAlreadyExistError;
-import com.example.demo.errors.UserNotFoundError;
+import com.example.demo.exceptions.UserAlreadyExistException;
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.models.UserEntity;
 import com.example.demo.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping ("/users")
+@AllArgsConstructor
 public class UserController {
 
-
-    @Autowired
     private UserService userService;
 
     @PostMapping
     @RequestMapping("/reg")
-    public ResponseEntity registration(@RequestBody UserEntity user){
+    public ResponseEntity registration(@RequestBody UserEntity user) {
+
         try{
             userService.registration(user);
             return ResponseEntity.ok("user saved");
-
-        }catch(UserAlreadyExistError e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (Exception e) {
+        }catch(UserAlreadyExistException thrown){
+            return ResponseEntity.badRequest().body(thrown.getMessage());
+        } catch (Exception e) {
             return  ResponseEntity.badRequest().body("error reg");
         }
     }
@@ -38,11 +36,9 @@ public class UserController {
     public ResponseEntity getUserInfo(@RequestParam Integer id){
         try {
             return ResponseEntity.ok(userService.getInfo(id));
-
-        }catch(UserNotFoundError e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-
-        }catch(Exception e){
+        }catch(UserNotFoundException thrown) {
+            return ResponseEntity.badRequest().body(thrown.getMessage());
+        }catch(Exception thrown){
             return ResponseEntity.badRequest().body("error info");
         }
     }
@@ -53,9 +49,8 @@ public class UserController {
     public  ResponseEntity deleteUser(@RequestParam Integer id){
         try {
             return ResponseEntity.ok(userService.delete(id));
-
-        }catch(Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(Exception thrown) {
+            return ResponseEntity.badRequest().body(thrown.getMessage());
         }
     }
 }
