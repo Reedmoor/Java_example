@@ -1,7 +1,7 @@
 package com.example.demo.exceptions;
 
+import lombok.experimental.StandardException;
+
+@StandardException
 public class UserNotFoundException extends Exception {
-    public UserNotFoundException(String message) {
-        super(message);
-    }
 }
