@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "user_entity")
+@Builder
 @Data
 public class UserEntity {
     @Id

@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,10 +23,11 @@ public class UserService {
             throw new UserAlreadyExistException("Пользователь уже существует");
         }
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setName(userDto.getName());
-        userEntity.setEmail(userDto.getEmail());
-        userEntity.setPassword(userDto.getPassword());
+        UserEntity userEntity = UserEntity.builder()
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .password(userDto.getPassword())
+                .build();
 
         return userRepo.save(userEntity);
     }
@@ -40,8 +39,11 @@ public class UserService {
 
     public String delete(final Integer id) throws UserNotFoundException {
         userRepo.findById(id)
+                .map(user -> {
+                    userRepo.deleteById(id);
+                    return "Пользователь удален";
+                })
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        userRepo.deleteById(id);
-        return "Пользователь успешно удален";
+        return "";
     }
 }

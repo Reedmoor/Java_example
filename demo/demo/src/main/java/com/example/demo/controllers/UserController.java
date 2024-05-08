@@ -6,6 +6,7 @@ import com.example.demo.models.UserDto;
 import com.example.demo.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,8 @@ public class UserController {
             log.error("Ошибка регистрации: {}", thrown.getMessage(), thrown);
             return ResponseEntity.badRequest().body(thrown.getMessage());
         } catch (Exception thrown) {
-            return ResponseEntity.badRequest().body("Ошибка регистрации");
+            log.error("Ошибка регистрации: {}", thrown.getMessage(), thrown);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка регистрации");
         }
     }
 
@@ -38,7 +40,8 @@ public class UserController {
             log.error("Пользователь не найден: {}", thrown.getMessage(), thrown);
             return ResponseEntity.badRequest().body(thrown.getMessage());
         } catch (Exception thrown) {
-            return ResponseEntity.badRequest().body("Ошибка при запросе информации о пользователе");
+            log.error("Ошибка регистрации: {}", thrown.getMessage(), thrown);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при запросе информации о пользователе");
         }
     }
 
@@ -48,7 +51,7 @@ public class UserController {
             return ResponseEntity.ok(userService.delete(id));
         } catch (Exception thrown) {
             log.error("Ошибка при удалении пользователя: {}", thrown.getMessage(), thrown);
-            return ResponseEntity.badRequest().body(thrown.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при удалении пользователя");
         }
     }
 }
