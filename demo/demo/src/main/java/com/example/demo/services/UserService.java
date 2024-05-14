@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +19,10 @@ public class UserService {
     final UserRepo userRepo;
 
     public UserEntity registration(final UserDto userDto) throws UserAlreadyExistException {
-        val foundUser = userRepo.findByName(userDto.getName());
-        if (foundUser != null) {
-            throw new UserAlreadyExistException("Пользователь уже существует");
-        }
+        val foundUser = Optional.ofNullable(userRepo.findByName(userDto.getName()))
+                .orElseThrow(() -> new UserAlreadyExistException("Пользователь уже существует"));
 
-        UserEntity userEntity = UserEntity.builder()
+        val userEntity = UserEntity.builder()
                 .email(userDto.getEmail())
                 .name(userDto.getName())
                 .password(userDto.getPassword())
