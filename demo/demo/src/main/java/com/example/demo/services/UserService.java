@@ -37,12 +37,11 @@ public class UserService {
     }
 
     public String delete(final Integer id) throws UserNotFoundException {
-        userRepo.findById(id)
+        return userRepo.findById(id)
                 .map(user -> {
                     userRepo.deleteById(id);
-                    return "Пользователь удален";
+                    return "Пользователь успешно удален";
                 })
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        return "";
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с ID " + id + " не найден"));
     }
 }
